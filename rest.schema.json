@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Rest provider schema definition",
+  "type": "object",
+  "properties": {
+    "module": { "type": "string" },
+    "paths": {
+      "type": "object",
+      "default": {
+        "models": "./internal/models",
+        "interfaces": "./internal/interfaces",
+        "services": "./internal/services",
+        "store": "./internal/store",
+        "router": "./internal/router",
+        "migrations": "./migrations",
+        "handlers": "./internal/handlers",
+        "utils": "./internal/utils"
+      },
+      "properties": {
+        "models": { "type": "string", "default": "./internal/models" },
+        "interfaces": { "type": "string", "default": "./internal/interfaces" },
+        "services": { "type": "string", "default": "./internal/services" },
+        "store": { "type": "string", "default": "./internal/store" },
+        "router": { "type": "string", "default": "./internal/router" },
+        "handlers": { "type": "string", "default": "./internal/handlers" },
+        "migrations": { "type": "string", "default": "./migrations" },
+        "utils": { "type": "string", "default": "./internal/utils" }
+      }
+    }
+  }
+}
