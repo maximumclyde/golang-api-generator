@@ -14,7 +14,8 @@
         "router": "./internal/router",
         "migrations": "./migrations",
         "handlers": "./internal/handlers",
-        "utils": "./internal/utils"
+        "utils": "./internal/utils",
+        "seeders": "./cmd/seeders"
       },
       "properties": {
         "models": { "type": "string", "default": "./internal/models" },
@@ -24,7 +25,8 @@
         "router": { "type": "string", "default": "./internal/router" },
         "handlers": { "type": "string", "default": "./internal/handlers" },
         "migrations": { "type": "string", "default": "./migrations" },
-        "utils": { "type": "string", "default": "./internal/utils" }
+        "utils": { "type": "string", "default": "./internal/utils" },
+        "seeders": { "type": "string", "default": "./cmd/seeders" }
       }
     }
   }
