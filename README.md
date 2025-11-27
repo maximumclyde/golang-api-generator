@@ -20,7 +20,7 @@ to view the available commands and options.
 
 - **Config**
 
-The bin will look for an **optional** file named “rest.config.json” which holds the configuration options for the code generation. These options are defined in a json file in the project names “rest.schema.json” defined using the json draft-07 standard. This file can be omitted completely or referenced by a different name using the
+The bin will look for an **optional** file named “generator.config.json” which holds the configuration options for the code generation. These options are defined in a json file in the project names “rest.schema.json” defined using the json draft-07 standard. This file can be omitted completely or referenced by a different name using the
 
 ```bash
 --config
@@ -28,12 +28,10 @@ The bin will look for an **optional** file named “rest.config.json” which ho
 
 option and specifying the path to the configuration file.
 
-The simplest rest.config.json that loads the schema definition and offers IDE autocomplete and defaults is:
+To create a default configuration file, run
 
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/maximumclyde/golang-api-generator/master/rest.schema.json"
-}
+```bash
+api-generator [--config="./some/path"] create config
 ```
 
 - **Init**

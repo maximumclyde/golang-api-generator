@@ -19,6 +19,7 @@ func help() {
 	fmt.Println("create")
 	fmt.Println(" - service		Creates a service along with it's definitions ans migrations")
 	fmt.Println(" - migration		Creates a new empty migration file")
+	fmt.Println(" - config		Creates a default configuration file")
 	fmt.Printf("\n")
 
 	fmt.Println("Options:")
