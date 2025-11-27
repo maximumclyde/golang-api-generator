@@ -32,7 +32,7 @@ func createService() {
 	tableName = strcase.ToSnake(tableName)
 
 	// file prefix to attach to the start of the file
-	filePrefix := strings.ToLower(strcase.ToKebab(resourceName))
+	filePrefix := strings.ToLower(strcase.ToSnake(resourceName))
 
 	//#region migration
 	createMigration(resourceName, false)
@@ -141,7 +141,7 @@ func createService() {
 	if err != nil {
 		if os.IsNotExist(err) {
 			// create the seeder file
-			fmt.Println("Creating seeder... ")
+			fmt.Print("Creating seeder... ")
 			err = os.MkdirAll(path.Join(config.Cwd, config.Paths.Seeders), os.ModePerm)
 			if err != nil {
 				fmt.Println("\n❌ Could not create seeder folder")
