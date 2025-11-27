@@ -1,24 +1,21 @@
 package main
 
-import "strings"
-
 func replaceTokens(data []byte) []byte {
-	handlerImportToken := getPackageName(config.Paths.Handlers)
-	interfaceImportToken := getPackageName(config.Paths.Interfaces)
-	modelImportToken := getPackageName(config.Paths.Models)
-	routerImportToken := getPackageName(config.Paths.Router)
-	serviceImportToken := getPackageName(config.Paths.Services)
-	storeImportToken := getPackageName(config.Paths.Store)
-	utilImportToken := getPackageName(config.Paths.Utils)
+	handlerImportToken := ([]byte)(getPackageName(config.Paths.Handlers) + ".")
+	interfaceImportToken := ([]byte)(getPackageName(config.Paths.Interfaces) + ".")
+	modelImportToken := ([]byte)(getPackageName(config.Paths.Models) + ".")
+	routerImportToken := ([]byte)(getPackageName(config.Paths.Router) + ".")
+	serviceImportToken := ([]byte)(getPackageName(config.Paths.Services) + ".")
+	storeImportToken := ([]byte)(getPackageName(config.Paths.Store) + ".")
+	utilImportToken := ([]byte)(getPackageName(config.Paths.Utils) + ".")
 
-	str := string(data)
-	str = strings.ReplaceAll(str, HandlerTokens, handlerImportToken)
-	str = strings.ReplaceAll(str, InterfaceTokens, interfaceImportToken)
-	str = strings.ReplaceAll(str, ModelTokens, modelImportToken)
-	str = strings.ReplaceAll(str, RouterTokens, routerImportToken)
-	str = strings.ReplaceAll(str, ServiceTokens, serviceImportToken)
-	str = strings.ReplaceAll(str, StoreTokens, storeImportToken)
-	str = strings.ReplaceAll(str, UtilTokens, utilImportToken)
+	data = HandlerTokens.ReplaceAll(data, handlerImportToken)
+	data = InterfaceTokens.ReplaceAll(data, interfaceImportToken)
+	data = ModelTokens.ReplaceAll(data, modelImportToken)
+	data = RouterTokens.ReplaceAll(data, routerImportToken)
+	data = ServiceTokens.ReplaceAll(data, serviceImportToken)
+	data = StoreTokens.ReplaceAll(data, storeImportToken)
+	data = UtilTokens.ReplaceAll(data, utilImportToken)
 
-	return ([]byte)(str)
+	return data
 }
