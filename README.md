@@ -36,13 +36,13 @@ api-generator [--config="./some/path"] create config
 
 - **Init**
 
-On a newly starter project, the first thing that should be run is the
+On a newly starter project, the first thing that should be run is
 
 ```bash
 api-generator init
 ```
 
-command. This will create the modules, services, utils and interfaces required to get started.
+This will create the modules, services, utils and interfaces required to get started.
 
 - **Services**
 
@@ -52,13 +52,21 @@ Services and handlers can be added using the
 api-generator create service
 ```
 
-command. Here you’ll be prompted to input the name of the table in the database. The generator will take care of creating a new migration for the table, a new default model definition, a service for the model and a rest api handler. Along with these, the generator creates or updated en existing store and router. The store saves a reference to the database and the collection of services. The models have default decoration for json conversion, gorm usage and **[go-faker](https://github.com/go-faker/faker)** for seeders
+command. Here you’ll be prompted to input the name of the table in the database. The generator will take care of creating:
+
+- a new migration for the table
+- a new default model definition
+- a service for the model
+- a seeder for the model
+- a rest api handler (if the --no-handler option is false)
+
+Along with these, the generator creates or updated the existing store, router and seeder main file. The models have default decoration for json conversion, gorm usage and **[go-faker](https://github.com/go-faker/faker)** for seeders
 
 **Use this command only for tables that can be references by a single id field called “id”. This is a simple generator that handles dealing with the boilerplate code that comes with large systems. It’s best for services and handlers to be created manually for more complex tables or tables that use a different convention than the one specified.**
 
 The router takes care of registering routes and exposing them to clients. Upon adding new services these files will be **UPDATED AUTOMATICALLY. Try not to tinker too much in those files.**
 
-The convention is that the router takes all the custom configuration in the beginning and **registers the routes at the end before returning.** In the store, the generator looks up and updates a type called **StoreServices.** This is the collection of all the services for the api, even for those that are not exposed to the api.
+The convention is that the router takes all the custom configuration in the beginning and **registers the routes at the end before returning.** In the store, the generator looks up and updates a type called **StoreServices.** This is the collection of all the services in the application, even for those that are not exposed to the api. The seeder file gets updated automatically. New seeders are **appended at the end of the existing file**
 
 To generate services that don’t need to be exposed to external apis, use the command
 
