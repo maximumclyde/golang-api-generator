@@ -13,11 +13,11 @@ import (
 
 // #region embed
 //
-//go:embed rest.schema.json handlers interfaces migrations models router services store utils
+//go:embed rest.schema.json generator.config.json handlers interfaces migrations models router services store utils
 var efs embed.FS
 
 // #region config paths
-var ConfigPath = "./rest.config.json"
+var ConfigPath = "./generator.config.json"
 var SchemaName = "rest.schema.json"
 
 // #region flags
@@ -106,8 +106,11 @@ func init() {
 
 	data, err = os.ReadFile(path.Join(cwd, ConfigPath))
 	if err != nil {
-		fmt.Println("⚠️  WARNING: rest.config.json could not be found. Preceding with defaults...")
+		if flag.Arg(0) == "create" && flag.Arg(1) == "config" {
+			return
+		}
 
+		fmt.Println("⚠️  WARNING: generator.config.json could not be found. Preceding with defaults...")
 		return
 	}
 
@@ -149,6 +152,8 @@ func main() {
 		initProvider()
 	case "create":
 		switch flag.Arg(1) {
+		case "config":
+			createConfig()
 		case "service":
 			createService()
 		case "migration":
