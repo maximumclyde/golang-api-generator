@@ -6,7 +6,7 @@ import (
 
 func help() {
 	fmt.Println("Rest Service Tool")
-	fmt.Println("This is a tool used to create models, migrations and a ready to go rest API using gorm, go migrate and gin")
+	fmt.Println("A code generator for rest APIs using gorm, gin and go-faker")
 	fmt.Printf("\n")
 
 	fmt.Println("Usage:")
@@ -26,5 +26,4 @@ func help() {
 	fmt.Println("--help			Display this help page")
 	fmt.Println("--config		Set the config folder")
 	fmt.Println("--no-handler		Disables automatically creating handlers for the new service")
-	// fmt.Printf("\n")
 }
