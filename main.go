@@ -7,13 +7,14 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"regexp"
 
 	schema "github.com/xeipuuv/gojsonschema"
 )
 
 // #region embed
 //
-//go:embed rest.schema.json generator.config.json handlers interfaces migrations models router services store utils
+//go:embed rest.schema.json generator.config.json handlers interfaces migrations models router services store utils seeders
 var efs embed.FS
 
 // #region config paths
@@ -29,13 +30,13 @@ var (
 
 // #region tokens
 var (
-	HandlerTokens   = `handlers\.`
-	InterfaceTokens = `interfaces\.`
-	ModelTokens     = `models\.`
-	RouterTokens    = `router\.`
-	ServiceTokens   = `services\.`
-	StoreTokens     = `store\.`
-	UtilTokens      = `utils\.`
+	HandlerTokens   = regexp.MustCompile(`(?m)handlers\.`)
+	InterfaceTokens = regexp.MustCompile(`(?m)interfaces\.`)
+	ModelTokens     = regexp.MustCompile(`(?m)models\.`)
+	RouterTokens    = regexp.MustCompile(`(?m)router\.`)
+	ServiceTokens   = regexp.MustCompile(`(?m)services\.`)
+	StoreTokens     = regexp.MustCompile(`(?m)store\.`)
+	UtilTokens      = regexp.MustCompile(`(?m)utils\.`)
 )
 
 // #region imports
@@ -59,6 +60,7 @@ type Paths struct {
 	Services   string `json:"services"`
 	Store      string `json:"store"`
 	Utils      string `json:"utils"`
+	Seeders    string `json:"seeders"`
 }
 
 // #region config
@@ -78,6 +80,7 @@ var config Config = Config{
 		Services:   "./internal/services",
 		Store:      "./internal/store",
 		Utils:      "./internal/utils",
+		Seeders:    "./cmd/seeders",
 	},
 }
 
