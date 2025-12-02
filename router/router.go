@@ -13,6 +13,7 @@ func NewRouter(s *store.Store) *gin.Engine {
 	publicRoutes := g.Group("")
 	protectedRoutes := g.Group("")
 
+	//#region Template
 	templateHandler := handlers.NewTemplateHandler(s)
 	templateHandler.RegisterRoutes(publicRoutes, protectedRoutes)
 
