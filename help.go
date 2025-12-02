@@ -26,4 +26,5 @@ func help() {
 	fmt.Println("--help			Display this help page")
 	fmt.Println("--config		Set the config folder")
 	fmt.Println("--no-handler		Disables automatically creating handlers for the new service")
+	fmt.Println("--custom		Indicates that the new service should not be derived from the default predefined provider")
 }
