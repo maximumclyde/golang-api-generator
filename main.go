@@ -109,7 +109,7 @@ func init() {
 
 	data, err = os.ReadFile(path.Join(cwd, ConfigPath))
 	if err != nil {
-		if flag.Arg(0) == "create" && flag.Arg(1) == "config" {
+		if *NeedsHelp || len(flag.Args()) == 0 || (flag.Arg(0) == "create" && flag.Arg(1) == "config") {
 			return
 		}
 
