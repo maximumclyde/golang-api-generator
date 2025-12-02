@@ -56,7 +56,12 @@ func createMigration(name string, empty bool) {
 		return
 	}
 
-	templateData, err := efs.ReadFile("migrations/template.sql")
+	fileToRead := "migrations/template.sql"
+	if *Custom {
+		fileToRead = "migrations/custom_template.sql"
+	}
+
+	templateData, err := efs.ReadFile(fileToRead)
 	if err != nil {
 		fmt.Println("\n❌ Could not load sql template data")
 		panic(err)

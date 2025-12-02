@@ -62,7 +62,13 @@ command. Here you’ll be prompted to input the name of the table in the databas
 
 Along with these, the generator creates or updated the existing store, router and seeder main file. The models have default decoration for json conversion, gorm usage and **[go-faker](https://github.com/go-faker/faker)** for seeders
 
-**Use this command only for tables that can be references by a single id field called “id”. This is a simple generator that handles dealing with the boilerplate code that comes with large systems. It’s best for services and handlers to be created manually for more complex tables or tables that use a different convention than the one specified.**
+If a service needs to be created for a table that is not referenced by a single primary key, so it doesn't follow the standard convention, run:
+
+```bash
+api-generator --custom create service
+```
+
+This command will still create all the mentioned files, however, it's up to you to manually implement all the functions and business logic.
 
 The router takes care of registering routes and exposing them to clients. Upon adding new services these files will be **UPDATED AUTOMATICALLY. Try not to tinker too much in those files.**
 

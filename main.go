@@ -26,6 +26,7 @@ var (
 	NeedsHelp        = flag.Bool("help", false, "Display help page")
 	ManualConfigPath = flag.String("config", ConfigPath, "Manually sets the config path")
 	NoHandler        = flag.Bool("no-handler", false, "Disables automatically creating handlers for the new service")
+	Custom           = flag.Bool("custom", false, "Indicates that the new service should not be derived from the default predefined provider")
 )
 
 // #region tokens

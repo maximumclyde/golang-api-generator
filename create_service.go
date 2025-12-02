@@ -34,21 +34,38 @@ func createService() {
 	// file prefix to attach to the start of the file
 	filePrefix := strings.ToLower(strcase.ToSnake(resourceName))
 
+	kebabResource := strcase.ToKebab(resourceName)
+
+	rscRg := regexp.MustCompile(`(?m)Template`)
+	cRscRg := regexp.MustCompile(`(?m)CustomTemplate`)
+	tmptsRg := regexp.MustCompile(`(?m)templates`)
+	templateRg := regexp.MustCompile(`(?m)template`)
+
+	var tmpModelData []byte
+
 	//#region migration
 	createMigration(resourceName, false)
 
-	//#region creating model
+	//#region model
 	fmt.Print("Creating model... ")
 	mdlFile := filePrefix + ".model.go"
-	tmpModelData, err := efs.ReadFile("models/template.model.go")
+	efsFileName := "models/template.model.go"
+	if *Custom {
+		efsFileName = "models/custom_template.model.go"
+	}
+	tmpModelData, err = efs.ReadFile(efsFileName)
 	if err != nil {
 		fmt.Println("\n❌ Could not load model template data")
 		panic(err)
 	}
 
 	tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Models))
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "templates", tableName))
+	if *Custom {
+		tmpModelData = cRscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	} else {
+		tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	}
+	tmpModelData = tmptsRg.ReplaceAll(tmpModelData, ([]byte)(tableName))
 
 	err = os.WriteFile(path.Join(config.Paths.Models, mdlFile), tmpModelData, os.ModePerm)
 	if err != nil {
@@ -61,14 +78,22 @@ func createService() {
 	//#region service
 	fmt.Print("Creating service... ")
 	svcFile := filePrefix + ".service.go"
-	tmpModelData, err = efs.ReadFile("services/template.service.go")
+	efsFileName = "services/template.service.go"
+	if *Custom {
+		efsFileName = "services/custom_template.service.go"
+	}
+	tmpModelData, err = efs.ReadFile(efsFileName)
 	if err != nil {
 		fmt.Println("\n❌ Could not load service template data")
 		panic(err)
 	}
 
 	tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Services))
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
+	if *Custom {
+		tmpModelData = cRscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	} else {
+		tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	}
 
 	err = os.WriteFile(path.Join(config.Paths.Services, svcFile), tmpModelData, os.ModePerm)
 	if err != nil {
@@ -100,7 +125,7 @@ func createService() {
 			}
 
 			tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Store))
-			tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
+			tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
 
 			err = os.WriteFile(storePath, tmpModelData, os.ModePerm)
 			if err != nil {
@@ -155,8 +180,8 @@ func createService() {
 			}
 
 			tmpModelData = contentReplace(tmpModelData, "main")
-			tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "template", lowerResourceName))
-			tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
+			tmpModelData = templateRg.ReplaceAll(tmpModelData, ([]byte)(lowerResourceName))
+			tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
 
 			err = os.WriteFile(seederPath, tmpModelData, os.ModePerm)
 			if err != nil {
@@ -185,8 +210,8 @@ func createService() {
 		}
 
 		tmpModelData = tmpModelData[regionIndex[0] : len(tmpModelData)-3]
-		tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
-		tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "template", lowerResourceName))
+		tmpModelData = templateRg.ReplaceAll(tmpModelData, ([]byte)(lowerResourceName))
+		tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
 
 		actualSeederData, err := os.ReadFile(seederPath)
 		if err != nil {
@@ -222,7 +247,7 @@ func createService() {
 	}
 
 	tmpModelData = contentReplace(tmpModelData, "main")
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
+	tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
 
 	err = os.WriteFile(path.Join(config.Paths.Seeders, sdFile), tmpModelData, os.ModePerm)
 	if err != nil {
@@ -245,15 +270,24 @@ func createService() {
 		panic(err)
 	}
 
-	tmpModelData, err = efs.ReadFile("handlers/template.handler.go")
+	handlerEfsFilename := "handlers/template.handler.go"
+	if *Custom {
+		handlerEfsFilename = "handlers/custom_template.handler.go"
+	}
+
+	tmpModelData, err = efs.ReadFile(handlerEfsFilename)
 	if err != nil {
 		fmt.Println("\n❌ Could not load handler template data")
 		panic(err)
 	}
 
 	tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Handlers))
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
-	tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "templates", filePrefix))
+	if *Custom {
+		tmpModelData = cRscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	} else {
+		tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+	}
+	tmpModelData = tmptsRg.ReplaceAll(tmpModelData, []byte(kebabResource))
 
 	err = os.WriteFile(path.Join(config.Paths.Handlers, handlerFile), tmpModelData, os.ModePerm)
 	if err != nil {
@@ -285,8 +319,9 @@ func createService() {
 			}
 
 			tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Router))
-			tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "templateHandler", lowerResourceName+"Handler"))
-			tmpModelData = ([]byte)(strings.ReplaceAll((string)(tmpModelData), "Template", resourceName))
+
+			tmpModelData = rscRg.ReplaceAll(tmpModelData, ([]byte)(resourceName))
+			tmpModelData = templateRg.ReplaceAll(tmpModelData, ([]byte)(lowerResourceName))
 
 			err = os.WriteFile(routerPath, tmpModelData, os.ModePerm)
 			if err != nil {
@@ -306,10 +341,11 @@ func createService() {
 			panic(err)
 		}
 
-		replaceStr := "\n" + lowerResourceName + "Handler := handlers.New" + resourceName + "Handler(s)\n"
+		replaceStr := "\n" + "//#region " + resourceName + "\n" + lowerResourceName + "Handler := handlers.New" + resourceName + "Handler(s)\n"
 		replaceStr = replaceStr + lowerResourceName + "Handler.RegisterRoutes(publicRoutes, protectedRoutes)\n"
 
-		tmpModelData = ([]byte)(strings.ReplaceAll(string(tmpModelData), "return g", replaceStr+"\nreturn g"))
+		rtRg := regexp.MustCompile(`(?m)return g`)
+		tmpModelData = rtRg.ReplaceAll(tmpModelData, ([]byte)(replaceStr+"\nreturn g"))
 		tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Router))
 
 		err = os.WriteFile(routerPath, tmpModelData, os.ModePerm)
