@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
+	"regexp"
 	"time"
 
 	"github.com/iancoleman/strcase"
@@ -40,38 +40,67 @@ func createMigration(name string, empty bool) {
 	}
 
 	snakeName := strcase.ToSnake(migrationName)
-	fileName := fmt.Sprintf("%v_%v.sql", time.Now().UnixMilli()/1000, snakeName)
+	sqlVersion := time.Now().UnixMilli() / 1000
 
-	fmt.Print("Creating migration " + fileName + "... ")
-
-	file, err := os.Create(path.Join(config.Cwd, config.Paths.Migrations, fileName))
-	if err != nil {
-		fmt.Println("\n❌ Could not create migration file")
-		panic(err)
-	}
-	defer file.Close()
+	upFileName := fmt.Sprintf("%v_%v.up.sql", sqlVersion, snakeName)
+	downFileName := fmt.Sprintf("%v_%v.down.sql", sqlVersion, snakeName)
 
 	if empty {
+		// if empty we simply need to create the files and return
+		fmt.Print("Creating " + upFileName + "... ")
+		upFile, err := os.Create(path.Join(config.Cwd, config.Paths.Migrations, upFileName))
+		if err != nil {
+			fmt.Println("\n❌ Could not create migration file")
+			panic(err)
+		}
+		defer upFile.Close()
+
+		fmt.Print("Creating " + downFileName + "... ")
+		downFile, err := os.Create(path.Join(config.Cwd, config.Paths.Migrations, downFileName))
+		if err != nil {
+			fmt.Println("\n❌ Could not create migration file")
+			panic(err)
+		}
+		defer downFile.Close()
 		fmt.Println("✅")
+
 		return
 	}
 
-	fileToRead := "migrations/template.sql"
+	upFileToRead := "migrations/template.up.sql"
+	downFileToRead := "migrations/template.down.sql"
 	if *Custom {
-		fileToRead = "migrations/custom_template.sql"
+		upFileToRead = "migrations/custom_template.up.sql"
+		downFileToRead = "migrations/custom_template.down.sql"
 	}
 
-	templateData, err := efs.ReadFile(fileToRead)
+	tRg := regexp.MustCompile(`(?m)template`)
+
+	upData, err := efs.ReadFile(upFileToRead)
 	if err != nil {
 		fmt.Println("\n❌ Could not load sql template data")
 		panic(err)
 	}
 
-	_, err = file.WriteString(
-		strings.ReplaceAll(string(templateData), "template", snakeName),
-	)
+	upData = tRg.ReplaceAll(upData, ([]byte)(snakeName))
+
+	downData, err := efs.ReadFile(downFileToRead)
 	if err != nil {
-		fmt.Println("\n❌ Could not write sql migration file")
+		fmt.Println("\n❌ Could not load sql template data")
+		panic(err)
+	}
+
+	downData = tRg.ReplaceAll(downData, ([]byte)(snakeName))
+
+	err = os.WriteFile(path.Join(config.Cwd, config.Paths.Migrations, upFileName), upData, os.ModePerm)
+	if err != nil {
+		fmt.Println("\n❌ Could not write " + upFileName)
+		panic(err)
+	}
+
+	err = os.WriteFile(path.Join(config.Cwd, config.Paths.Migrations, downFileName), downData, os.ModePerm)
+	if err != nil {
+		fmt.Println("\n❌ Could not write " + downFileName)
 		panic(err)
 	}
 
