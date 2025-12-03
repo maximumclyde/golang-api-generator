@@ -46,11 +46,11 @@ func (s *RestService[T]) GetById(ctx context.Context, id string) (*T, error) {
 	return val.(*T), nil
 }
 
-func (s *RestService[T]) Find(ctx context.Context, query ...any) ([]T, error) {
+func (s *RestService[T]) Find(ctx context.Context, query ...any) (*[]T, error) {
 	//#region find
 	db := s.GetDb(ctx)
 
-	data := []T{}
+	data := new([]T)
 
 	dbWConditions := utils.AttachQueryConditions(db, query)
 
