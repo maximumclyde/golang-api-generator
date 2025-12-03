@@ -35,9 +35,10 @@ func (s *CustomTemplateService) GetConfig() *models.RestProviderConfig {
 func (s *CustomTemplateService) GetDb(ctx context.Context) *gorm.DB {
 	//#region get db
 	txK := s.GetConfig().TxKey
-	var db *gorm.DB = ctx.Value(txK).(*gorm.DB)
-	if db == nil {
-		db = s.db
+	var db *gorm.DB = s.db
+	txDb := ctx.Value(txK)
+	if txDb != nil {
+		db = txDb.(*gorm.DB)
 	}
 
 	return db.WithContext(ctx)
