@@ -5,10 +5,20 @@ type Template struct {
 }
 
 type TemplateCreate struct {
+	Template
+}
+
+type TemplatePatch struct {
+	Template
 }
 
 type TemplateQuery struct {
+	Template
 	Id *string `form:"id"`
+}
+
+type TemplateResponse struct {
+	Id string `json:"id" faker:"uuid_hyphenated"`
 }
 
 func (Template) TableName() string {

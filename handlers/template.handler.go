@@ -27,7 +27,7 @@ func NewTemplateHandler[T models.Template](s *store.Store) *TemplateHandler {
 
 func (h *TemplateHandler) Create(ctx *gin.Context) {
 	//#region create
-	var body = &models.Template{}
+	var body = &models.TemplateCreate{}
 	err := ctx.ShouldBindJSON(body)
 
 	if err != nil {
@@ -70,7 +70,7 @@ func (h *TemplateHandler) Find(ctx *gin.Context) {
 		return
 	}
 
-	data, err := h.Store.Services.Template.Find(ctx)
+	data, err := h.Store.Services.Template.Find(ctx, query)
 	if err != nil {
 		utils.SendInternalError(ctx, err)
 		return
@@ -87,7 +87,7 @@ func (h *TemplateHandler) Patch(ctx *gin.Context) {
 		return
 	}
 
-	data := &map[string]any{}
+	data := &models.TemplatePatch{}
 	err := ctx.ShouldBindJSON(data)
 	if err != nil {
 		utils.SendBadRequest(ctx, err)
