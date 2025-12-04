@@ -1,13 +1,14 @@
 package router
 
 import (
-	"github.com/maximumclyde/golang-api-generator/handlers"
-	"github.com/maximumclyde/golang-api-generator/store"
+	"api-generator/handlers"
+	"api-generator/store"
 
 	"github.com/gin-gonic/gin"
 )
 
 func NewRouter(s *store.Store) *gin.Engine {
+	//#region new
 	g := gin.New()
 
 	publicRoutes := g.Group("")

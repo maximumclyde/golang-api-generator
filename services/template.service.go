@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/maximumclyde/golang-api-generator/models"
+	"api-generator/models"
 
 	"gorm.io/gorm"
 )

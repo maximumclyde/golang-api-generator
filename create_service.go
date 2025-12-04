@@ -146,7 +146,23 @@ func createService() {
 		}
 
 		tmpModelData = ([]byte)(strings.ReplaceAll(string(tmpModelData), "StoreServices struct {", "StoreServices struct {\n"+resourceName+" *services."+resourceName+"Service "))
-		tmpModelData = ([]byte)(strings.ReplaceAll(string(tmpModelData), "Services: StoreServices{", "Services: StoreServices{\n"+resourceName+": services.New"+resourceName+"Service(db, txk), "))
+
+		// checks if the services where imported or not
+		// if the services were not imported it means that
+		// this is the first service that's being created after init
+		servicesPath := path.Join(config.Module, config.Paths.Services)
+		impRg := regexp.MustCompile(`(?m)` + servicesPath)
+
+		im := impRg.Find(tmpModelData)
+		if im == nil {
+			// the import was not found, so we need to add the import and the txK declaration
+			tmpModelData = ([]byte)(strings.ReplaceAll(string(tmpModelData), "Services: StoreServices{", "Services: StoreServices{\n"+resourceName+": services.New"+resourceName+"Service(db, txk),\n"))
+			tmpModelData = ([]byte)(strings.Replace(string(tmpModelData), "import (", "import ("+"\n"+"\""+servicesPath+"\" ", 1))
+			tmpModelData = ([]byte)(strings.Replace(string(tmpModelData), "store := &Store", "txk := new(models.TxKey)\n\n"+"store := &Store", 1))
+		} else {
+			tmpModelData = ([]byte)(strings.ReplaceAll(string(tmpModelData), "Services: StoreServices{", "Services: StoreServices{\n"+resourceName+": services.New"+resourceName+"Service(db, txk), "))
+		}
+
 		tmpModelData = contentReplace(tmpModelData, getPackageName(config.Paths.Store))
 
 		err = os.WriteFile(storePath, tmpModelData, os.ModePerm)
@@ -339,6 +355,25 @@ func createService() {
 		if err != nil {
 			fmt.Println("\n❌ Could not read router file")
 			panic(err)
+		}
+
+		// check whether the handlers where imported
+		// if the handlers are not imported, this means that
+		// this is the first service after init
+		handlersPath := path.Join(config.Module, config.Paths.Handlers)
+		impRg := regexp.MustCompile(`(?m)` + handlersPath)
+		im := impRg.Find(tmpModelData)
+		if im == nil {
+			// the import was not found so we add the import and the
+			// public and protected routes declarations
+			impRg = regexp.MustCompile(`(?m)import \(`)
+			tmpModelData = impRg.ReplaceAll(tmpModelData, ([]byte)("import (\n"+"\""+handlersPath+"\""))
+
+			groupsBytes := ([]byte)("publicRoutes := g.Group(\"\")\n" + "protectedRoutes := g.Group(\"\")\n\n")
+			impRg = regexp.MustCompile(`(?m)return.*`)
+			tmpModelData = impRg.ReplaceAllFunc(tmpModelData, func(b []byte) []byte {
+				return append(groupsBytes, b...)
+			})
 		}
 
 		replaceStr := "\n" + "//#region " + resourceName + "\n" + lowerResourceName + "Handler := handlers.New" + resourceName + "Handler(s)\n"

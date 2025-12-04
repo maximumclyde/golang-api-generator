@@ -1,6 +1,21 @@
 # Golang API Generator
 
-A code generator for rest APIs using gorm and gin.
+A code generator for rest APIs using gorm, gin, faker and go-migrate.
+
+# Tech stack
+
+- **[gin](https://github.com/gin-gonic/gin)**
+- **[gorm](https://github.com/go-gorm/gorm)**
+- **[go-migrate](https://github.com/golang-migrate/migrate)**
+- **[faker](https://github.com/go-faker/faker)**
+
+Good to know:
+
+- **[validator](https://github.com/go-playground/validator)**
+
+Gin uses this library under the hood to check basic data integrity
+
+# First steps
 
 After cloning, run:
 
@@ -18,7 +33,7 @@ In your project, call
 
 to view the available commands and options.
 
-- **Config**
+# Config
 
 The bin will look for an **optional** file named “generator.config.json” which holds the configuration options for the code generation. These options are defined in a json file in the project names “rest.schema.json” defined using the json draft-07 standard. This file can be omitted completely or referenced by a different name using the
 
@@ -34,7 +49,7 @@ To create a default configuration file, run
 api-generator [--config="./some/path"] create config
 ```
 
-- **Init**
+# Init
 
 On a newly starter project, the first thing that should be run is
 
@@ -42,25 +57,28 @@ On a newly starter project, the first thing that should be run is
 api-generator init
 ```
 
-This will create the modules, services, utils and interfaces required to get started.
+This will create the main.go file, the store, router, modules, services, utils and interfaces required to get started.
 
-- **Services**
+Here you'll be prompted to enter the server's host and the db connection string. Both of these are optional and will be put hard coded in the code simply to make the application running. The strings and the configurations can be changed at any time. **Do not deploy hard coded connection strings and secrets**
 
-Services and handlers can be added using the
+# Services
+
+Services and handlers can be added by running:
 
 ```bash
 api-generator create service
 ```
 
-command. Here you’ll be prompted to input the name of the table in the database. The generator will take care of creating:
+Here you’ll be prompted to input the name of the table in the database. The generator will take care of creating:
 
+- a migrator cli util using go-migrate if it's not present
 - a new migration for the table
 - a new default model definition
 - a service for the model
 - a seeder for the model
 - a rest api handler (if the --no-handler option is false)
 
-Along with these, the generator creates or updated the existing store, router and seeder main file. The models have default decoration for json conversion, gorm usage and **[go-faker](https://github.com/go-faker/faker)** for seeders
+Along with these, the generator creates or updated the existing store, router and seeder main file. The models have default decoration for json conversion, gorm usage and faker for seeders
 
 If a service needs to be created for a table that is not referenced by a single primary key, so it doesn't follow the standard convention, run:
 
@@ -80,7 +98,7 @@ To generate services that don’t need to be exposed to external apis, use the c
 api-generator --no-handler create service
 ```
 
-- **Migrations**
+# Migrations
 
 A migration file is always created as part of a service, with or without api handlers. In every case, the user will be prompted to input the table name and a default migration will be created using the input value **turned in snake_case.** When created as part of a service, a default migration will write a simple sql statement that creates a table. If needed, the generator can create empty migrations using
 
@@ -88,4 +106,14 @@ A migration file is always created as part of a service, with or without api han
 api-migration create migration
 ```
 
-**Careful, this generator is not a migration tool. This is simply a shortcut for writing versioned sql files based on creation timestamp. You’ll need another tool to handle applying and/or rolling back migrations.**
+In order to apply the migrations run
+
+```bash
+go run ./path/to/migrator/main.go
+```
+
+**Careful!**
+
+**The automatically generated migrator file simply runs the script inside the file.**
+
+**Do not assume it only applies migrations up! Always make sure to double check the file contents before applying migrations!**

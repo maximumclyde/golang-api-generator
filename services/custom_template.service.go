@@ -3,7 +3,8 @@ package services
 import (
 	"context"
 
-	"github.com/maximumclyde/golang-api-generator/models"
+	"api-generator/models"
+
 	"gorm.io/gorm"
 )
 

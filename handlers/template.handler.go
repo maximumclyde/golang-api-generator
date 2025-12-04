@@ -3,9 +3,9 @@ package handlers
 import (
 	"errors"
 
-	"github.com/maximumclyde/golang-api-generator/models"
-	"github.com/maximumclyde/golang-api-generator/store"
-	"github.com/maximumclyde/golang-api-generator/utils"
+	"api-generator/models"
+	"api-generator/store"
+	"api-generator/utils"
 
 	"github.com/gin-gonic/gin"
 )

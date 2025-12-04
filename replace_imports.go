@@ -15,6 +15,7 @@ func replaceImports(data []byte) []byte {
 	strData = strings.Replace(strData, ServicesImport, path.Join(config.Module, config.Paths.Services), 1)
 	strData = strings.Replace(strData, StoreImport, path.Join(config.Module, config.Paths.Store), 1)
 	strData = strings.Replace(strData, UtilsImport, path.Join(config.Module, config.Paths.Utils), 1)
+	strData = strings.Replace(strData, DatabaseImport, path.Join(config.Module, config.Paths.Database), 1)
 
 	return ([]byte)(strData)
 }

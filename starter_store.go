@@ -1,15 +1,13 @@
-package store
+package main
 
 import (
 	"api-generator/models"
-	"api-generator/services"
 
 	"gorm.io/gorm"
 )
 
 // #region models
 type StoreServices struct {
-	Template *services.TemplateService
 }
 
 type Store struct {
@@ -19,13 +17,9 @@ type Store struct {
 
 func NewStore(db *gorm.DB) *Store {
 	//#region new
-	txk := new(models.TxKey)
-
 	store := &Store{
-		Services: StoreServices{
-			Template: services.NewTemplateService(db, txk),
-		},
-		TxKey: new(models.TxKey),
+		Services: StoreServices{},
+		TxKey:    new(models.TxKey),
 	}
 
 	return store

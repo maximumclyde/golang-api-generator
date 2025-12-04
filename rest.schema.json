@@ -15,7 +15,10 @@
         "migrations": "./migrations",
         "handlers": "./internal/handlers",
         "utils": "./internal/utils",
-        "seeders": "./cmd/seeders"
+        "seeders": "./cmd/seeders",
+        "database": "./internal/db",
+        "server": "./cmd/server",
+        "migrator": "./cmd/migrator"
       },
       "properties": {
         "models": { "type": "string", "default": "./internal/models" },
@@ -26,7 +29,10 @@
         "handlers": { "type": "string", "default": "./internal/handlers" },
         "migrations": { "type": "string", "default": "./migrations" },
         "utils": { "type": "string", "default": "./internal/utils" },
-        "seeders": { "type": "string", "default": "./cmd/seeders" }
+        "seeders": { "type": "string", "default": "./cmd/seeders" },
+        "database": { "type": "string", "default": "./internal/db" },
+        "server": { "type": "string", "default": "./cmd/server" },
+        "migrator": { "type": "string", "default": "./cmd/migrator" }
       }
     }
   }

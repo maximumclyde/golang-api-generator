@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/maximumclyde/golang-api-generator/store"
+	"api-generator/store"
 
 	"github.com/gin-gonic/gin"
 )

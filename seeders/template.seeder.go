@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
+	"api-generator/models"
+
 	"github.com/go-faker/faker/v4"
-	"github.com/maximumclyde/golang-api-generator/models"
 	"gorm.io/gorm"
 )
 

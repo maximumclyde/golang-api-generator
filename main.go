@@ -14,8 +14,13 @@ import (
 
 // #region embed
 //
-//go:embed rest.schema.json generator.config.json handlers interfaces migrations models router services store utils seeders
+//go:embed rest.schema.json generator.config.json handlers interfaces migrations models router services store utils seeders db server migrator
 var efs embed.FS
+
+// #region started files fs
+//
+//go:embed starter_store.go starter_router.go
+var starterFs embed.FS
 
 // #region config paths
 var ConfigPath = "./generator.config.json"
@@ -42,13 +47,14 @@ var (
 
 // #region imports
 var (
-	HandlersImport   = `github.com/maximumclyde/golang-api-generator/handlers`
-	InterfacesImport = `github.com/maximumclyde/golang-api-generator/interfaces`
-	ModelsImport     = `github.com/maximumclyde/golang-api-generator/models`
-	RouterImport     = `github.com/maximumclyde/golang-api-generator/router`
-	ServicesImport   = `github.com/maximumclyde/golang-api-generator/services`
-	StoreImport      = `github.com/maximumclyde/golang-api-generator/store`
-	UtilsImport      = `github.com/maximumclyde/golang-api-generator/utils`
+	HandlersImport   = `api-generator/handlers`
+	InterfacesImport = `api-generator/interfaces`
+	ModelsImport     = `api-generator/models`
+	RouterImport     = `api-generator/router`
+	ServicesImport   = `api-generator/services`
+	StoreImport      = `api-generator/store`
+	UtilsImport      = `api-generator/utils`
+	DatabaseImport   = `api-generator/db`
 )
 
 // #region paths
@@ -62,6 +68,9 @@ type Paths struct {
 	Store      string `json:"store"`
 	Utils      string `json:"utils"`
 	Seeders    string `json:"seeders"`
+	Database   string `json:"database"`
+	Server     string `json:"server"`
+	Migrator   string `json:"migrator"`
 }
 
 // #region config
@@ -82,6 +91,9 @@ var config Config = Config{
 		Store:      "./internal/store",
 		Utils:      "./internal/utils",
 		Seeders:    "./cmd/seeders",
+		Database:   "./internal/db",
+		Server:     "./cmd/server",
+		Migrator:   "./cmd/migrator",
 	},
 }
 
@@ -173,5 +185,5 @@ func main() {
 		return
 	}
 
-	fmt.Println("✅ Done!")
+	fmt.Println("Done! ✅")
 }
