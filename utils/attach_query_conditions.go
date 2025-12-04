@@ -25,12 +25,12 @@ func AttachQueryConditions(db *gorm.DB, query ...any) *gorm.DB {
 	for _, q := range query {
 		// if the type is a slice, we destructure the conditions for the update
 		if reflect.TypeOf(q).Kind() == 23 {
+			// we put the first argument as the main syntax for the query and destructure the bindings
 			qC := q.([]any)
 			if len(qC) == 0 {
 				continue
 			}
 
-			// we put the first argument as the main syntax for the query and destructure the bindings
 			if len(qC) > 1 {
 				conditions = conditions.Where(qC[0], qC[1:]...)
 			} else {

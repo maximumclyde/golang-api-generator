@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 
 	"github.com/maximumclyde/golang-api-generator/interfaces"
 	"github.com/maximumclyde/golang-api-generator/models"
@@ -30,7 +29,7 @@ func NewRestService[T interfaces.IGormModel](db *gorm.DB, txK *models.TxKey) *Re
 	return provider
 }
 
-func (s *RestService[T]) Create(ctx context.Context, data *T) error {
+func (s *RestService[T]) Create(ctx context.Context, data any) error {
 	//#region create
 	db := s.GetDb(ctx)
 	return db.Create(data).Error
@@ -39,11 +38,13 @@ func (s *RestService[T]) Create(ctx context.Context, data *T) error {
 func (s *RestService[T]) GetById(ctx context.Context, id string) (*T, error) {
 	//#region get by id
 	db := s.GetDb(ctx)
-	val, err := db.Get(id)
-	if err {
-		return nil, errors.New("not_found")
+	data := new(T)
+	err := db.Where("id = ?", id).First(data).Error
+	if err != nil {
+		return nil, err
 	}
-	return val.(*T), nil
+
+	return data, nil
 }
 
 func (s *RestService[T]) Find(ctx context.Context, query ...any) (*[]T, error) {
@@ -62,13 +63,14 @@ func (s *RestService[T]) Find(ctx context.Context, query ...any) (*[]T, error) {
 	return data, nil
 }
 
-func (s *RestService[T]) Patch(ctx context.Context, id string, data *T) error {
+func (s *RestService[T]) Patch(ctx context.Context, id string, data any) error {
 	//#region patch
 	db := s.GetDb(ctx)
-	return db.Where("id = ?", id).Save(data).Error
+
+	return db.Where("id = ?", id).Updates(data).Error
 }
 
-func (s *RestService[T]) Update(ctx context.Context, data T, query ...any) error {
+func (s *RestService[T]) Update(ctx context.Context, data any, query ...any) error {
 	//#region update
 	db := s.GetDb(ctx)
 
@@ -80,16 +82,18 @@ func (s *RestService[T]) Update(ctx context.Context, data T, query ...any) error
 func (s *RestService[T]) Remove(ctx context.Context, id string) error {
 	//#region remove
 	db := s.GetDb(ctx)
-	return db.Where("id = ?", id).Delete(ctx).Error
+	mdl := new(T)
+	return db.Delete(mdl, "id = ?", id).Error
 }
 
 func (s *RestService[T]) Delete(ctx context.Context, query ...any) error {
 	//#region delete
 	db := s.GetDb(ctx)
 
+	mdl := new(T)
 	dbWConditions := utils.AttachQueryConditions(db, query)
 
-	return dbWConditions.Delete(ctx).Error
+	return dbWConditions.Delete(mdl).Error
 }
 
 func (s *RestService[T]) GetConfig() *models.RestProviderConfig {
@@ -103,7 +107,8 @@ func (s *RestService[T]) GetDb(ctx context.Context) *gorm.DB {
 	var db *gorm.DB = s.db
 	txDb := ctx.Value(txK)
 	if txDb != nil {
-		db = txDb.(*gorm.DB)
+		mdl := new(T)
+		db = txDb.(*gorm.DB).Model(mdl)
 	}
 
 	return db.WithContext(ctx)

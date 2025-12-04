@@ -38,7 +38,7 @@ func (s *CustomTemplateService) GetDb(ctx context.Context) *gorm.DB {
 	var db *gorm.DB = s.db
 	txDb := ctx.Value(txK)
 	if txDb != nil {
-		db = txDb.(*gorm.DB)
+		db = txDb.(*gorm.DB).Model(&models.CustomTemplate{})
 	}
 
 	return db.WithContext(ctx)

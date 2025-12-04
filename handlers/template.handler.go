@@ -63,6 +63,13 @@ func (h *TemplateHandler) GetById(ctx *gin.Context) {
 
 func (h *TemplateHandler) Find(ctx *gin.Context) {
 	//#region find
+	query := &models.TemplateQuery{}
+	err := ctx.ShouldBind(query)
+	if err != nil {
+		utils.SendBadRequest(ctx, err)
+		return
+	}
+
 	data, err := h.Store.Services.Template.Find(ctx)
 	if err != nil {
 		utils.SendInternalError(ctx, err)
@@ -80,7 +87,7 @@ func (h *TemplateHandler) Patch(ctx *gin.Context) {
 		return
 	}
 
-	data := &models.Template{}
+	data := &map[string]any{}
 	err := ctx.ShouldBindJSON(data)
 	if err != nil {
 		utils.SendBadRequest(ctx, err)
