@@ -1,1 +1,1 @@
-drop table template();
+drop table template;
